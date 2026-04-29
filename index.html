@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Karl Donnelly — Trading Referrals</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #070b10;
+      --surface: #0d1520;
+      --border: #1a2840;
+      --gold: #c9a84c;
+      --gold-light: #e8c97a;
+      --gold-dim: rgba(201,168,76,0.12);
+      --text: #d4dbe8;
+      --muted: #5a6a80;
+      --accent: #3a6ea5;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Mono', monospace;
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Animated background grid */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(201,168,76,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(201,168,76,0.04) 1px, transparent 1px);
+      background-size: 60px 60px;
+      animation: gridDrift 30s linear infinite;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    @keyframes gridDrift {
+      0%   { transform: translate(0, 0); }
+      100% { transform: translate(60px, 60px); }
+    }
+
+    /* Radial glow */
+    body::after {
+      content: '';
+      position: fixed;
+      top: -20%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 900px;
+      height: 600px;
+      background: radial-gradient(ellipse, rgba(201,168,76,0.07) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .wrapper {
+      position: relative;
+      z-index: 1;
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 80px 24px 100px;
+    }
+
+    /* ── Header ── */
+    header {
+      text-align: center;
+      margin-bottom: 72px;
+      animation: fadeDown 0.8s ease both;
+    }
+
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .tag {
+      display: inline-block;
+      font-size: 10px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--gold);
+      border: 1px solid var(--gold-dim);
+      padding: 5px 14px;
+      border-radius: 2px;
+      margin-bottom: 28px;
+      background: rgba(201,168,76,0.05);
+    }
+
+    h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(52px, 10vw, 84px);
+      letter-spacing: 0.06em;
+      line-height: 0.9;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+
+    h1 span {
+      color: var(--gold);
+    }
+
+    .subtitle {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: 16px;
+      color: var(--muted);
+      margin-top: 16px;
+      letter-spacing: 0.02em;
+    }
+
+    /* ── Divider ── */
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 48px;
+      animation: fadeIn 1s ease 0.3s both;
+    }
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border), transparent);
+    }
+    .divider-icon {
+      font-size: 12px;
+      color: var(--gold);
+      letter-spacing: 0.2em;
+    }
+
+    /* ── Disclaimer ── */
+    .disclaimer {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      background: rgba(90,106,128,0.08);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--muted);
+      border-radius: 4px;
+      padding: 14px 18px;
+      margin-bottom: 32px;
+      animation: fadeIn 1s ease 0.25s both;
+    }
+
+    .disclaimer-icon {
+      font-size: 12px;
+      color: var(--muted);
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .disclaimer p {
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+      line-height: 1.7;
+    }
+
+    /* ── Cards ── */
+    .cards {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .card {
+      position: relative;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 28px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      text-decoration: none;
+      color: inherit;
+      overflow: hidden;
+      transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+      animation: fadeUp 0.7s ease both;
+    }
+
+    .card:nth-child(1) { animation-delay: 0.15s; }
+    .card:nth-child(2) { animation-delay: 0.3s; }
+    .card:nth-child(3) { animation-delay: 0.45s; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Left shimmer on hover */
+    .card::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 3px;
+      background: var(--gold);
+      transform: scaleY(0);
+      transform-origin: bottom;
+      transition: transform 0.35s ease;
+    }
+
+    /* Glow sweep on hover */
+    .card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, var(--gold-dim) 0%, transparent 60%);
+      opacity: 0;
+      transition: opacity 0.35s ease;
+    }
+
+    .card:hover {
+      border-color: rgba(201,168,76,0.4);
+      transform: translateY(-3px);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(201,168,76,0.15);
+    }
+
+    .card:hover::before { transform: scaleY(1); }
+    .card:hover::after  { opacity: 1; }
+
+    .card.tbc {
+      opacity: 0.55;
+      cursor: default;
+    }
+    .card.tbc:hover {
+      transform: none;
+      border-color: var(--border);
+      box-shadow: none;
+    }
+    .card.tbc::before { display: none; }
+    .card.tbc::after  { display: none; }
+
+    /* Card content */
+    .card-left { position: relative; z-index: 1; flex: 1; min-width: 0; }
+
+    .card-num {
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      color: var(--gold);
+      margin-bottom: 6px;
+      opacity: 0.7;
+    }
+
+    .card-name {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 30px;
+      letter-spacing: 0.08em;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+
+    .card-desc {
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 0.05em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .card-right {
+      position: relative;
+      z-index: 1;
+      flex-shrink: 0;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 10px 20px;
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      border-radius: 2px;
+      background: transparent;
+      white-space: nowrap;
+      transition: background 0.25s, color 0.25s;
+    }
+
+    .card:hover .btn {
+      background: var(--gold);
+      color: #070b10;
+    }
+
+    .btn-tbc {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 10px 20px;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      border-radius: 2px;
+    }
+
+    .arrow {
+      font-size: 14px;
+      transition: transform 0.25s;
+    }
+    .card:hover .arrow { transform: translateX(4px); }
+
+    /* ── Badge ── */
+    .badge {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      font-size: 9px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 2px;
+      z-index: 2;
+    }
+    .badge-soon {
+      background: rgba(90,106,128,0.2);
+      color: var(--muted);
+      border: 1px solid var(--border);
+    }
+
+    /* ── Footer ── */
+    footer {
+      text-align: center;
+      margin-top: 72px;
+      animation: fadeIn 1s ease 0.8s both;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    footer p {
+      font-size: 10px;
+      color: var(--muted);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+
+    .ticker {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      margin-top: 12px;
+    }
+    .dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--gold);
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: 0.4; transform: scale(0.7); }
+    }
+
+    @media (max-width: 480px) {
+      .card { flex-direction: column; align-items: flex-start; padding: 22px 20px; }
+      .card-right { align-self: stretch; }
+      .btn, .btn-tbc { width: 100%; justify-content: center; text-align: center; }
+      .badge { top: 12px; right: 12px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+
+    <header>
+      <div class="tag">Referral Links</div>
+      <h1>KARL<br/><span>DONNELLY</span></h1>
+      <p class="subtitle">Trading platforms I trust — join through my links</p>
+    </header>
+
+    <div class="divider">
+      <span class="divider-icon">◆ ◆ ◆</span>
+    </div>
+
+    <div class="disclaimer">
+      <span class="disclaimer-icon">⚠</span>
+      <p>I am not a financial advisor. All information provided is for educational purposes only and does not constitute financial advice. Please conduct your own research before making any investment decisions.</p>
+    </div>
+
+    <div class="cards">
+
+      <!-- JIFU -->
+      <a class="card" href="https://shop.jifu.com/en/us/KarlDonnelly/join/enrollment?enrollment_type=preferred" target="_blank" rel="noopener noreferrer">
+        <div class="card-left">
+          <div class="card-num">01</div>
+          <div class="card-name">JIFU</div>
+          <div class="card-desc">shop.jifu.com — Preferred Enrollment</div>
+        </div>
+        <div class="card-right">
+          <div class="btn">Join Now <span class="arrow">→</span></div>
+        </div>
+      </a>
+
+      <!-- QUO Markets -->
+      <a class="card" href="https://my.quomarkets.com/register?regnew=019b5b3a-2fee-7387-8bf9-fa43808283d2" target="_blank" rel="noopener noreferrer">
+        <div class="card-left">
+          <div class="card-num">02</div>
+          <div class="card-name">QUO MARKETS</div>
+          <div class="card-desc">my.quomarkets.com — New Account Registration</div>
+        </div>
+        <div class="card-right">
+          <div class="btn">Register <span class="arrow">→</span></div>
+        </div>
+      </a>
+
+      <!-- Hola Prime -->
+      <div class="card tbc">
+        <span class="badge badge-soon">Coming Soon</span>
+        <div class="card-left">
+          <div class="card-num">03</div>
+          <div class="card-name">HOLA PRIME</div>
+          <div class="card-desc">Referral link coming soon</div>
+        </div>
+        <div class="card-right">
+          <div class="btn-tbc">TBC</div>
+        </div>
+      </div>
+
+    </div>
+
+    <footer>
+      <div class="disclaimer">
+        <p class="disclaimer-title">⚠ Disclaimer</p>
+        <p class="disclaimer-text">
+          I am not a financial advisor. All information provided on this page is for educational and informational purposes only and does not constitute financial, investment, or trading advice. Trading involves significant risk of loss. Please conduct your own research and consult a qualified financial professional before making any investment decisions.
+        </p>
+      </div>
+
+      <p style="margin-top:24px;">© 2026 Karl Donnelly · All referrals appreciated</p>
+    </footer>
+
+  </div>
+</body>
+</html>
